@@ -19,6 +19,10 @@ const dbConfig = {
         trustServerCertificate: true
     }
 };
+app.get("/", (req, res) => {
+    res.send("API is working");
+});
+
 
 // Настройка почтового транспорта
 const transporter = nodemailer.createTransport({
