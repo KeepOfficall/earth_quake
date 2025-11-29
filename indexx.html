@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Зилзала Детектору</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+html {
+  scroll-behavior: smooth;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+} 
+nav{
+  position: fixed;
+  display: flex;
+  height: 60px;
+  width: 100%;
+  background: #1b1b1b;
+  align-items: center;  
+  justify-content: space-around;
+  padding: 0 20px 0 20px;
+  flex-wrap: wrap;
+}
+nav img{
+    width: 50px;
+}
+nav .logo{
+  color: #fff;
+  font-size: 27px;
+  font-weight: 400;
+}
+nav ul{
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+nav ul li{
+  margin: 0 5px;
+}
+nav ul li a{
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 200;
+  padding: 8px 15px;
+  border-radius: 5px;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+nav ul li a.active,
+nav ul li a:hover{
+  color: #797451;
+  background: #fff;
+}
+nav .menu-btn i{
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  display: none;
+}
+input[type="checkbox"]{
+  display: none;
+}
+@media (max-width: 1000px){
+  nav{
+    padding: 0 25px 0 25px;
+  }
+}
+@media (max-width: 920px) {
+  nav .menu-btn i{
+    display: block;
+  }
+  #click:checked ~ .menu-btn i:before{
+    content: "\f00d";
+  }
+  nav ul{
+    position: fixed;
+    top: 60px;
+    left: -100%;
+    background: #111;
+    height: 100vh;
+    width: 100%;
+    text-align: center;
+    display: block;
+    transition: all 0.3s ease;
+  }
+  #click:checked ~ ul{
+    left: 0;
+  }
+  nav ul li{
+    width: 100%;
+    margin: 40px 0;
+  }
+  nav ul li a{
+    width: 100%;
+    margin-left: -100%;
+    display: block;
+    font-size: 20px;
+    transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  #click:checked ~ ul li a{
+    margin-left: 0px;
+  }
+  nav ul li a.active,
+  nav ul li a:hover{
+    background: none;
+    color: #797451;
+    font-weight: 500;
+  }
+}
+.content{
+  position:absolute;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 100%;
+  height: fit-content;  
+  color: #fff;
+  z-index: -1;
+}
+.main{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: start;
+  font-size: 40px;
+  font-weight: 200;
+  z-index: 1;
+  padding: 0 20px;
+}
+.main p{
+    font-size: 19px;
+}
+.main a{
+    font-size: 17px;
+    width: fit-content;
+    text-decoration: none;
+    padding: 13px;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    transition: all 0.5s;
+    margin-top: 10px;
+}
+.main a:hover{
+    background: #797451;
+    border: none;
+    color: #fff;
+}
+.map{
+    height: fit-content;
+    background: #1b1b1b;
+    z-index: 1;
+}
+
+ #map {
+      height: 400px;
+      margin: 20px;
+      border: 2px solid #555;
+      border-radius: 10px;
+    }
+.form_container{
+  margin-top: -170px;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  justify-content: center;
+}
+form{
+    background: rgba(255,255,255, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 2vw 5vw;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    margin-top: 270px;
+}
+.logomass{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+form img{
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+}
+form h3{
+    color: #fff;
+    font-weight: 400;
+    margin-bottom: 40px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    text-align: center;
+}
+form label{
+    font-weight: 400;
+    margin-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: #fff;
+}
+form input, form textarea, select{
+    border: 0;
+    border-radius: 20px;
+    margin: 10px 0;
+    padding: 20px;
+    outline: none;
+    background: rgba(255,255,255, 0.9);
+    font-size: 16px;
+}
+form label i{
+    margin-right: 10px;
+}
+form button{
+    padding: 10px;
+    background: #797451;
+    color: #000;
+    font-size: 18px;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+    width: 150px;
+    margin: 20px auto 0;
+    border-radius: 10px;
+    transition: all .2s;
+}
+form button:hover{
+    scale: 1.08;
+    background: #797451;
+    color: #000;
+    border: 0;
+    box-shadow: 0 10px 15px #2d2a30;
+}
+
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <img src="img/techordo_logo.png" alt="">
+            <p>Tech<b style="color: #c5b97c;">Ordo</b></p>
+        </div>
+
+        <ul>
+            <li><a class="active" href="#" data-lang="menu_home">Башкы Бет</a></li>
+            <li><a href="#" data-lang="menu_about">Биз Жөнүндө</a></li>
+            <li><a href="https://erdbebenmonitor.netlify.app/" target="_blank" data-lang="menu_detector">Зилзала</a></li>
+            <button onclick="setLanguage('KG')">KG</button>
+            <button onclick="setLanguage('RU')">RU</button>
+            <button onclick="setLanguage('EN')">EN</button>
+        </ul>
+    </nav>
+
+    <div class="lang-switch">
+        
+    </div>
+
+    <div class="content">
+        <div class="main" id="main">
+            <h1 data-lang="main_title"></h1>
+            <p data-lang="main_desc"></p>
+            <a href="#form" data-lang="btn_register"></a>
+        </div>
+
+        <div class="map">
+            <h1 data-lang="map_title">Сейсмостанциялар</h1>
+            <p data-lang="map_desc">Төмөндө активдүү сейсмографтар көрсөтүлгөн</p>
+            <div id="map"></div>
+        </div>
+
+        <div class="form_container" id="form">
+            <form action="https://formsubmit.co/smartjashoo7@gmail.com" method="POST">
+                <div class="logomass">
+                    <img src="img/techordo_logo.png" alt="logo" class="tab_logo_1" style="height:50px;margin:auto;">
+                </div>
+
+                <h3 data-lang="form_title"></h3>
+
+                <label data-lang="label_name"><i class="fas fa-user"></i> Аты-жөнү:</label>
+                <input type="text" name="Аты" placeholder="Мисалы, Айбек/Айгул">
+
+                <label data-lang="label_email"><i class="fas fa-envelope"></i> E-mail почтасы:</label>
+                <input type="email" name="Email почтасы" placeholder="site123@gmail.com">
+
+                <label data-lang="label_phone"><i class="fas fa-phone-alt"></i> Байланыш номери:</label>
+                <input type="number" name="Телефон номери" placeholder="+996 999 999 999">
+
+                <label data-lang="label_region"><i class="fas fa-map-marker-alt"></i> Сиз жашаган аймак:</label>
+                <select name="област" id="regionSelect">
+                    <option data-lang="region_naryn">Нарын</option>
+                    <option data-lang="region_bishkek">Бишкек</option>
+                    <option data-lang="region_chuy">Чүй</option>
+                    <option data-lang="region_ysyk">Ысык-Кол</option>
+                    <option data-lang="region_talas">Талас</option>
+                    <option data-lang="region_jalal">Жалал-Абад</option>
+                    <option data-lang="region_osh">Ош</option>
+                    <option data-lang="region_batken">Баткен</option>
+                </select>
+
+                <button type="submit" data-lang="btn_submit"><i class="fas fa-share"></i> Катталуу</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            KG: {
+                menu_home: "Башкы Бет", menu_about: "Биз Жөнүндө", menu_detector: "Зилзала",
+                main_title: "Зилзала Детектору Кыргызстанда",
+                main_desc: "Зилзаланын кыйратуучу күчүнөн алгачкылардан болуп маалымат алгың келсе, бизге каттал!",
+                btn_register: "Катталуу", map_title: "Сейсмостанциялар", map_desc: "Төмөндө активдүү сейсмографтар көрсөтүлгөн",
+                form_title: "Бизге Катталыңыз!", label_name: "Аты-жөнү:", label_email: "E-mail почтасы:",
+                label_phone: "Байланыш номери:", label_region: "Сиз жашаган аймак:", btn_submit: "Катталуу",
+                region_naryn: "Нарын", region_bishkek: "Бишкек", region_chuy: "Чүй", region_ysyk: "Ысык-Кол",
+                region_talas: "Талас", region_jalal: "Жалал-Абад", region_osh: "Ош", region_batken: "Баткен"
+            },
+
+            RU: {
+                menu_home: "Главная", menu_about: "О нас", menu_detector: "Землетрясения",
+                main_title: "Детектор землетрясений в Кыргызстане",
+                main_desc: "Хотите быть первыми, кто узнает о землетрясении? Зарегистрируйтесь!",
+                btn_register: "Регистрация", map_title: "Сейсмостанции", map_desc: "Ниже активные сейсмографы",
+                form_title: "Зарегистрируйтесь!", label_name: "Имя:", label_email: "E-mail:", label_phone: "Телефон:",
+                label_region: "Ваш регион:", btn_submit: "Отправить",
+                region_naryn: "Нарын", region_bishkek: "Бишкек", region_chuy: "Чуйская обл.", region_ysyk: "Иссык-Кульская",
+                region_talas: "Таласская", region_jalal: "Джалал-Абадская", region_osh: "Ошская", region_batken: "Баткенская"
+            },
+
+            EN: {
+                menu_home: "Home", menu_about: "About Us", menu_detector: "Earthquake",
+                main_title: "Earthquake Detector in Kyrgyzstan",
+                main_desc: "Be among the first to receive earthquake alerts — register!",
+                btn_register: "Register", map_title: "Seismic Stations", map_desc: "Active seismographs below",
+                form_title: "Register with us!", label_name: "Name:", label_email: "E-mail:", label_phone: "Phone:",
+                label_region: "Your region:", btn_submit: "Submit",
+                region_naryn: "Naryn", region_bishkek: "Bishkek", region_chuy: "Chuy", region_ysyk: "Issyk-Kul",
+                region_talas: "Talas", region_jalal: "Jalal-Abad", region_osh: "Osh", region_batken: "Batken"
+            }
+        };
+
+        function setLanguage(lang) {
+            document.querySelectorAll("[data-lang]").forEach(el => {
+                const key = el.getAttribute("data-lang");
+                if (translations[lang][key]) el.textContent = translations[lang][key];
+            });
+            localStorage.setItem("language", lang);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const lang = localStorage.getItem("language") || "KG";
+            setLanguage(lang);
+        });
+    </script>
+
+    <script src="three.min.js"></script>
+    <script src="vanta.waves.min.js"></script>
+    <script>
+        VANTA.WAVES({
+            el: "#main",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0xd0d0d,
+            shininess: 49.00,
+            waveHeight: 16.00,
+            waveSpeed: 0.40,
+            zoom: 0.76
+        })
+
+
+    </script>
+    <script>
+        VANTA.WAVES({
+            el: "#form",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0xd0d0d,
+            shininess: 49.00,
+            waveHeight: 16.00,
+            waveSpeed: 0.40,
+            zoom: 0.76
+        })
+
+
+    </script>
+    <script>
+        // Инициализация карты без атрибуции
+        var map = L.map('map', {
+            attributionControl: false
+        }).setView([42.8746, 74.5698], 6); // Бишкек
+
+        // Светлая стандартная карта
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // Список сейсмографов
+        var sensors = [
+            { name: "Сейсмограф 1", lat: 42.8746, lng: 74.5698, mag: 3.4 },
+            { name: "Сейсмограф 2", lat: 40.515, lng: 72.8, mag: 4.1 },
+            { name: "Сейсмограф 2", lat: 42.826702, lng: 74.6645419, mag: 4.1 }
+
+        ];
+
+        // Добавляем маркеры
+        sensors.forEach(function (s) {
+            L.marker([s.lat, s.lng]).addTo(map)
+                .bindPopup(`${s.name}<br>Магнитуда: ${s.mag}`);
+        });
+
+
+        //form
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<!-- Created By CodingLab - www.codinglabweb.com -->
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+   <title>Зилзала Детектору</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+    <!-- Leaflet карты -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  </head>
+  <body id="body">
+    <nav>
+      <div class="logo"><img src="img/techordo_logo.png" alt="" ><p style="margin-top: -45px; margin-left: 58px;">Tech<b style="color: #797451;">Ordo</b></p></div>
+      <input type="checkbox" id="click">
+      <label for="click" class="menu-btn">
+        <i class="fas fa-bars"></i>
+      </label>
+      <ul>
+        <li><a class="active" href="#">Башкы Бет</a></li>
+        <li><a href="#">Биз Жөнүндө</a></li>
+        <li><a href="https://erdbebenmonitor.netlify.app/">Зилзала </a></li>
+      </ul>
+    </nav>
+    <div class="content" id="content">
+      <div class="main" id="main">Зилзала Детектору <b style=" color: #797451; font-weight: 700;">Кыргызстанда</b>
+      <p><b>Зилзаланын</b> кыйратуучу  күчүнөн алгачкылардан болуп маалымат алгың келсе, бизге каттал!</p>
+      <a href="#form"> Катталуу</a>
+      </div>    
+    <div class="map">
+        <h1 style="padding-left: 20px;">Сейсмостанциялар</h1>
+  <p style="padding-left: 20px;">Төмөндө активдүү сейсмографтар көрсөтүлгөн</p>
+
+  <div id="map"></div>
+  </div>
+  <div class="form_container" id="form">
+    <form id="registerForm">
+                    <div class="zaga">
+                        <div class="logomass">
+                            <img src="img/techordo_logo.png" alt="logo" class="tab_logo_1">
+                        </div>
+                        <div class="zagamass">
+                            <h3>Бизге Катталыңыз!</h3>
+                        </div>
+                    </div>
+                    <label for=""><i class="fas fa-user"></i>Аты-жөнү:</label>
+                    <input type="text" id="name" name="Аты" placeholder=" Мисалы, Айбек/Айгул">
+                    <label for=""><i class="fas fa-envelope"></i>E-mail почтасы:</label>
+                    <input type="email" id="email" name="Email почтасы" placeholder="site123@gmail.com">
+                    <label for=""><i class="fas fa-phone-alt"></i>Байланыш номери:</label>
+                    <input type="number" id="phone" name="Телефон номери" placeholder="+996 999 999 999">
+                    <label for=""><i class="fas fa-map-marker-alt"></i>Сиз жашаган аймак:</label>
+                    <select  id="region" name="област" >
+                        <option>Нарын</option>
+                        <option>Бишкек</option>
+                        <option>Чуй</option>
+                        <option>Ыссык-Кол</option>
+                        <option>Талас</option>
+                        <option>Жалал-Абад</option>
+                        <option>Ош</option>
+                        <option>Баткен</option>
+                    </select>
+                    <button type="submit"><i class="fas fa-share"> Катталуу</i></button>
+                </form>
+  </div>
+    </div>
+<script src="three.min.js"></script>
+<script src="vanta.waves.min.js"></script>
+<script>
+    VANTA.WAVES({
+  el: "#main",
+  mouseControls: true,
+  touchControls: true,
+  gyroControls: false,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  scale: 1.00,
+  scaleMobile: 1.00,
+  color: 0xd0d0d,
+  shininess: 49.00,
+  waveHeight: 16.00,
+  waveSpeed: 0.40,
+  zoom: 0.76
+})
+
+
+</script>
+<script>
+    VANTA.WAVES({
+  el: "#form",
+  mouseControls: true,
+  touchControls: true,
+  gyroControls: false,
+  minHeight: 200.00,
+  minWidth: 200.00,
+  scale: 1.00,
+  scaleMobile: 1.00,
+  color: 0xd0d0d,
+  shininess: 49.00,
+  waveHeight: 16.00,
+  waveSpeed: 0.40,
+  zoom: 0.76
+})
+
+
+</script>
+<script>
+    // Инициализация карты без атрибуции
+    var map = L.map('map', {
+      attributionControl: false
+    }).setView([42.8746, 74.5698], 6); // Бишкек
+
+    // Светлая стандартная карта
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Список сейсмографов
+    var sensors = [
+      { name: "Сейсмограф 1", lat: 42.8746, lng: 74.5698, mag: 3.4 },
+      { name: "Сейсмограф 2", lat: 40.515, lng: 72.8, mag: 4.1 },
+      { name: "Сейсмограф 2", lat: 42.826702, lng: 74.6645419, mag: 4.1 }
+
+    ];
+
+    // Добавляем маркеры
+    sensors.forEach(function(s) {
+      L.marker([s.lat, s.lng]).addTo(map)
+        .bindPopup(`${s.name}<br>Магнитуда: ${s.mag}`);
+    });
+
+
+    //form
+    
+  </script>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const region = document.getElementById('region').value;
+
+  if (!name || !email) {
+    alert('Введите имя и email');
+    return;
+  }
+
+  try {
+    const resp = await fetch('http://localhost:3000/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, phone, region })
+    });
+
+    const data = await resp.json();
+    if (resp.ok && data.success) {
+      alert('Вы успешно зарегистрированы!');
+      // очистить форму
+      document.getElementById('registerForm').reset();
+    } else {
+      alert('Ошибка регистрации: ' + (data.error || 'unknown'));
+    }
+  } catch (err) {
+    console.error('Fetch error', err);
+    alert('Ошибка связи с сервером: ' + err.message);
+  }
+});
+</script>
+
+  </body>
+</html>

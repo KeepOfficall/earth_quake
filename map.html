@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Детектор Землетрясений</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+
+    h1 {
+      margin-top: 20px;
+      color: #333;
+    }
+
+    #map {
+      height: 500px;
+      margin: 20px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .leaflet-control-attribution {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Детектор Землетрясений</h1>
+  <p>Контрастная карта с сейсмографами</p>
+
+  <div id="map"></div>
+
+  <script>
+    var map = L.map('map', {
+      attributionControl: false
+    }).setView([42.8746, 74.5698], 6); // Бишкек
+
+    // Контрастная карта: Carto Voyager
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Пример сейсмографов
+    var sensors = [
+      { name: "Сейсмограф 1", lat: 42.8746, lng: 74.5698, mag: 3.4 },
+      { name: "Сейсмограф 2", lat: 40.515, lng: 72.8, mag: 4.1 }
+    ];
+
+    // Добавляем маркеры
+    sensors.forEach(function(s) {
+      L.marker([s.lat, s.lng]).addTo(map)
+        .bindPopup(`${s.name}<br>Магнитуда: ${s.mag}`);
+    });
+  </script>
+
+</body>
+</html>
