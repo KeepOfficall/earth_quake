@@ -1,4 +1,5 @@
-// server.js
+require('dotenv').config(); 
+
 const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
@@ -19,20 +20,19 @@ const dbConfig = {
         trustServerCertificate: true
     }
 };
+
 app.get("/", (req, res) => {
     res.send("API is working");
 });
 
-
-// Настройка почтового транспорта
+// Настройка почтового транспорта через Gmail
 const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE,
+    service: "gmail",
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: "ulanovulukbek2@gmail.com",
+        pass: "owod pobm ctpg edyu"  // Google App Password
     }
 });
-
 // --- Маршрут для регистрации ---
 app.post('/register', async (req, res) => {
     const { name, email, phone, region } = req.body;
@@ -56,13 +56,15 @@ app.post('/register', async (req, res) => {
                 VALUES (@name, @email, @phone, @region)
             `);
 
+        // Настройка письма
         const mailOptions = {
-            from: 'ulanovulukbek2@gmail.com',
+            from: "ulanovulukbek2@gmail.com",
             to: email,
-            subject: 'Добро пожаловать в Зилзала Детектор!',
+            subject: 'Добро пожаловать!',
             text: `Привет, ${name}!\n\nВы успешно зарегистрированы на сайте Зилзала Детектор. Теперь вы будете получать новости и уведомления о сейсмостанциях.`
         };
 
+        // Отправка письма
         transporter.sendMail(mailOptions, (err, info) => {
             if (err) console.error('Ошибка отправки письма:', err);
             else console.log('Письмо отправлено:', info.response);
