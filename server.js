@@ -9,13 +9,13 @@ app.use(cors());
 app.use(express.json());
 
 const dbConfig = {
-    server: "SARBAGYSHOV",
+    server: "earthquakeserver.database.windows.net",
     database: "EarlyAlert",
-    user: "node_user",
+    user: "user",
     password: "Node123!",
     port: 1433,
     options: {
-        encrypt: false,
+        encrypt: true,
         trustServerCertificate: true
     }
 };
