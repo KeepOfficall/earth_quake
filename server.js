@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 const dbConfig = {
-    server: "arthquakeserver.database.windows.net",
+    server: "earthquakeserver.database.windows.net",
     database: "EarlyAlert",
     user: "user",
     password: "Node123!",
