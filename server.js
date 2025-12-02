@@ -1,4 +1,4 @@
-require('dotenv').config(); 
+require('dotenv').config();
 
 const express = require('express');
 const sql = require('mssql');
@@ -9,6 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ======= Конфиг локальной базы SQL =======
 const dbConfig = {
     server: "earthquakeserver.database.windows.net",
     database: "EarlyAlert",
@@ -21,19 +22,21 @@ const dbConfig = {
     }
 };
 
-app.get("/", (req, res) => {
-    res.send("API is working");
-});
-
-// Настройка почтового транспорта через Gmail
+// ======= Почтовый транспорт Gmail (локально работает) =======
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: "ulanovulukbek2@gmail.com",
-        pass: "owod pobm ctpg edyu"  // Google App Password
+        pass: "owod pobm ctpg edyu" // App password
     }
 });
-// --- Маршрут для регистрации ---
+
+// ======= Главная =======
+app.get("/", (req, res) => {
+    res.send("Local API is working");
+});
+
+// ======= Регистрация =======
 app.post('/register', async (req, res) => {
     const { name, email, phone, region } = req.body;
 
@@ -42,10 +45,8 @@ app.post('/register', async (req, res) => {
     }
 
     try {
-        // Подключаемся к базе
         const pool = await sql.connect(dbConfig);
 
-        // Вставляем данные в таблицу users
         await pool.request()
             .input('name', sql.NVarChar, name)
             .input('email', sql.NVarChar, email)
@@ -56,19 +57,14 @@ app.post('/register', async (req, res) => {
                 VALUES (@name, @email, @phone, @region)
             `);
 
-        // Настройка письма
         const mailOptions = {
             from: "ulanovulukbek2@gmail.com",
             to: email,
-            subject: 'Добро пожаловать!',
-            text: `Привет, ${name}!\n\nВы успешно зарегистрированы на сайте Зилзала Детектор. Теперь вы будете получать новости и уведомления о сейсмостанциях.`
+            subject: "Добро пожаловать!",
+            text: `Привет, ${name}! Ты успешно зарегистрирован локально!`
         };
 
-        // Отправка письма
-        transporter.sendMail(mailOptions, (err, info) => {
-            if (err) console.error('Ошибка отправки письма:', err);
-            else console.log('Письмо отправлено:', info.response);
-        });
+        await transporter.sendMail(mailOptions);
 
         res.json({ success: true });
 
@@ -78,5 +74,5 @@ app.post('/register', async (req, res) => {
     }
 });
 
-// --- Запуск сервера ---
-app.listen(3000, () => console.log("Server running at http://localhost:3000"));
+// ======= Старт =======
+app.listen(3000, () => console.log("Local server running at http://localhost:3000"));
