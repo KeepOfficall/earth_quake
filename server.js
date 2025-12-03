@@ -3,18 +3,17 @@ require('dotenv').config();
 const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ======= Конфиг Azure SQL =======
 const dbConfig = {
-    server: "earthquakeserver.database.windows.net", // твой сервер
-    database: "EarlyAlert",                           // твоя база
-    user: "user",                                     // твой SQL login
-    password: "Node123!",                             // твой пароль
+    server: "earthquakeserver.database.windows.net",
+    database: "EarlyAlert",
+    user: "user",
+    password: "Node123!",
     port: 1433,
     options: {
         encrypt: true,
@@ -22,23 +21,12 @@ const dbConfig = {
     }
 };
 
-// ======= Почтовый транспорт Gmail (SMTP) =======
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: "ulanovulukbek2@gmail.com",
-        pass: "owod pobm ctpg edyu" // твой App Password
-    }
-});
+const resend = new Resend("re_MDQDXqHE_4YUu2WQWtwmnvhhoATCVBSo7"); 
 
-// ======= Главная страница (тест) =======
 app.get("/", (req, res) => {
-    res.send("Render API is working!");
+    res.send("Render API is running with Resend!");
 });
 
-// ======= Маршрут регистрации =======
 app.post("/register", async (req, res) => {
     const { name, email, phone, region } = req.body;
 
@@ -47,10 +35,8 @@ app.post("/register", async (req, res) => {
     }
 
     try {
-        // Подключение к базе Azure SQL
         const pool = await sql.connect(dbConfig);
 
-        // Вставка пользователя в базу
         await pool.request()
             .input("name", sql.NVarChar, name)
             .input("email", sql.NVarChar, email)
@@ -61,12 +47,15 @@ app.post("/register", async (req, res) => {
                 VALUES (@name, @email, @phone, @region)
             `);
 
-        // Отправка письма пользователю
-        await transporter.sendMail({
-            from: "ulanovulukbek2@gmail.com",
+        await resend.emails.send({
+            from: "Zilzala Detector <onboarding@resend.dev>",
             to: email,
             subject: "Добро пожаловать!",
-            text: `Привет, ${name}! Вы успешно зарегистрированы на сайте Зилзала Детектор!`
+            html: `
+                <h2>Привет, ${name}!</h2>
+                <p>Вы успешно зарегистрированы на сайте <b>Зилзала Детектор</b>.</p>
+                <p>Спасибо за вашу регистрацию!</p>
+            `
         });
 
         res.json({ success: true });
@@ -77,6 +66,5 @@ app.post("/register", async (req, res) => {
     }
 });
 
-// ======= Запуск сервера =======
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
