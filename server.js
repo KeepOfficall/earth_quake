@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
@@ -9,6 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ======= Конфиг Azure SQL =======
 const dbConfig = {
     server: "earthquakeserver.database.windows.net",
     database: "EarlyAlert",
@@ -21,7 +20,7 @@ const dbConfig = {
     }
 };
 
-const resend = new Resend("re_MDQDXqHE_4YUu2WQWtwmnvhhoATCVBSo7"); 
+const resend = new Resend("re_MDQDXqHE_4YUu2WQWtwmnvhhoATCVBSo7"); // вставь свой ключ
 
 app.get("/", (req, res) => {
     res.send("Render API is running with Resend!");
@@ -47,7 +46,7 @@ app.post("/register", async (req, res) => {
                 VALUES (@name, @email, @phone, @region)
             `);
 
-        await resend.emails.send({
+        const result = await resend.emails.send({
             from: "Zilzala Detector <onboarding@resend.dev>",
             to: email,
             subject: "Добро пожаловать!",
@@ -58,7 +57,9 @@ app.post("/register", async (req, res) => {
             `
         });
 
-        res.json({ success: true });
+        console.log("RESEND RESULT:", result);
+
+        res.json({ success: true, resendStatus: result });
 
     } catch (err) {
         console.error("SERVER ERROR:", err);
