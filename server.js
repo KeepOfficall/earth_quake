@@ -9,10 +9,10 @@ app.use(express.json());
 
 // ======= Конфиг Azure SQL =======
 const dbConfig = {
-    server: "earthquakeserver.database.windows.net",
-    database: "EarlyAlert",
-    user: "user",
-    password: "Node123!",
+    server: "techordo.database.windows.net",
+    database: "EarthQuake",
+    user: "TechOrdo",
+    password: "Tech-ordo1",
     port: 1433,
     options: {
         encrypt: true,
